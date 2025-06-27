@@ -111,7 +111,7 @@ CACHES = {
 }
 
 sentry_sdk.init(
-    dsn="https://a35e770d8a8f68ca681e0cc7ae65ae81@o35007.ingest.us.sentry.io/4508042232856576",
+    dsn="https://b21a09737af800adb9b47caf65d81318@o35007.ingest.us.sentry.io/4509569099038720",
     traces_sample_rate=1.0,
     profiles_sample_rate=1.0,
 )

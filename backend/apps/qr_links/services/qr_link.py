@@ -33,10 +33,8 @@ class QRLinkService:
 
         return image_data_base64
 
-    def generate_qr_image_html_tag(self, link_hash: str) -> str:
-        qr_image_base64 = self.generate_qr_image_base64(
-            f"{settings.QR_DOMAIN}/public-api/qr/{link_hash}/"
-        )
+    def generate_qr_image_html_tag(self, link: str) -> str:
+        qr_image_base64 = self.generate_qr_image_base64(link)
 
         return mark_safe(
             f'<img src="data:image/png;base64,{qr_image_base64}" alt="QR Code" />'

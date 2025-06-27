@@ -1,1 +1,1 @@
-from .qr_link import QRLinkSerializer
+from .qr_link import QRLinkGetSerializer, QRLinkCreateUpdateSerializer

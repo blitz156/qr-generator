@@ -1,4 +1,4 @@
-FROM node:18 AS frontend-build
+FROM node:24 AS frontend-build
 
 COPY ./frontend/src/ /src/
 WORKDIR /src
@@ -7,7 +7,7 @@ RUN npm run build
 
 
 # ====================================================================== #
-FROM python:3.11-slim as backend-build
+FROM python:3.13-slim as backend-build
 
 RUN mkdir /src/
 ADD ./backend/ /src/
@@ -17,7 +17,7 @@ RUN python manage.py collectstatic
 
 
 # ====================================================================== #
-FROM nginx:1.27
+FROM nginx:1.29
 
 ADD ./nginx/etc/nginx/ /etc/nginx/
 COPY --from=frontend-build /src/build /var/www/qr-frontend

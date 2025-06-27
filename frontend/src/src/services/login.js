@@ -4,7 +4,7 @@ export default class LoginService extends ApiRequest {
   authenticate(username, password) {
     return this.request(
       "post",
-      "/api/seller/login/",
+      "/public-api/login/",
       {},
       { username, password }
     );

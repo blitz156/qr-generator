@@ -34,7 +34,7 @@ services:
   qr-frontend:
     build: frontend/
     ports:
-      - 3001:3000
+      - 3000:3000
     volumes:
       - ./frontend/src/public/:/src/public/:cached
       - ./frontend/src/src/:/src/src/:cached

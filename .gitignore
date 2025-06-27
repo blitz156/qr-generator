@@ -31,3 +31,4 @@ __pycache__/
 
 # Backup files
 backup.sql
+.idea/

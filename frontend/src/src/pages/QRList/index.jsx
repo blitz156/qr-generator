@@ -17,7 +17,7 @@ const QRListItem = ({ qr }) => (
       <span
         className="qr-image"
         dangerouslySetInnerHTML={{ __html: qr.image_html }}
-        style={{ width: 50, height: 50, display: 'block' }}
+        style={{ display: 'block', height: '100%', width: 'auto', maxWidth: '120px', aspectRatio: '1 / 1' }}
       />
     </div>
     <div className="qr-info-col">

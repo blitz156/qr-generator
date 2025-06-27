@@ -7,6 +7,7 @@ urlpatterns = [
         include(
             [
                 path("qr/", include("apps.qr_links.urls")),
+                path("users/", include("apps.users.urls")),
             ]
         ),
     ),

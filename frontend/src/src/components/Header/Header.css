@@ -1,0 +1,133 @@
+.header {
+  background: #fff;
+  color: #222;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 64px;
+  padding: 0 24px;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: #1976d2;
+}
+
+.header-logo-icon {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
+.header-title {
+  font-family: 'Roboto', 'Arial', sans-serif;
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: #1976d2;
+  letter-spacing: 0.5px;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-user-name {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #222;
+}
+
+.header-logout-btn button,
+.header-logout-btn {
+  border-radius: 16px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  min-width: 80px;
+  background: #fff !important;
+  color: #1976d2 !important;
+  border: 1.5px solid #1976d2 !important;
+  box-shadow: none !important;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.header-logout-btn button:hover,
+.header-logout-btn:hover {
+  background: #f5f8ff !important;
+  color: #0d47a1 !important;
+  border-color: #1565c0 !important;
+}
+
+.mui-minimal-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 64px;
+  padding: 0 24px;
+}
+
+.mui-minimal-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: #1976d2;
+}
+
+.mui-minimal-header-title {
+  font-family: 'Roboto', 'Arial', sans-serif;
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: #1976d2;
+  letter-spacing: 0.5px;
+}
+
+.mui-minimal-header-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mui-minimal-header-user-name {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #222;
+}
+
+.mui-minimal-header-logout-btn button,
+.mui-minimal-header-logout-btn {
+  border-radius: 16px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  min-width: 80px;
+  background: #fff !important;
+  color: #1976d2 !important;
+  border: 1.5px solid #1976d2 !important;
+  box-shadow: none !important;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.mui-minimal-header-logout-btn button:hover,
+.mui-minimal-header-logout-btn:hover {
+  background: #f5f8ff !important;
+  color: #0d47a1 !important;
+  border-color: #1565c0 !important;
+}

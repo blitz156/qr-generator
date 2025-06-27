@@ -18,4 +18,8 @@ export default class UserService extends ApiRequest {
       { username, password }
     );
   }
+
+  getInfo() {
+    return this.request("get", "/api/users/info/");
+  }
 }

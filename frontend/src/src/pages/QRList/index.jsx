@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import QRLinkService from "../../services/qr_links";
+import UserService from "../../services/users";
 import "./QRListPage.css";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
@@ -14,6 +15,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router";
+import Header from "../../components/Header/Header";
 
 const qrService = new QRLinkService();
 
@@ -37,7 +41,7 @@ const QRListItem = ({ qr, onEdit, onDelete }) => (
     <div className="qr-info-col">
       <div className="qr-title">{qr.link_description}</div>
       <div className="qr-link">
-        <b>Ссылка в QR:</b>{" "}
+        <b>Неизменная ссылка:</b>{" "}
         <a href={qr.qr_link} target="_blank" rel="noopener noreferrer">
           {qr.qr_link}
         </a>
@@ -109,8 +113,16 @@ const QRListPage = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
 
+  const [userName, setUserName] = useState("");
+  const navigate = useNavigate();
+
   useEffect(() => {
     setError(undefined);
+
+    const userService = new UserService();
+    userService.getInfo().then((res) => {
+      setUserName(res?.data?.username || "Пользователь");
+    }).catch(() => setUserName("Пользователь"));
 
     qrService
       .list()
@@ -127,6 +139,11 @@ const QRListPage = () => {
         setLoading(false);
       });
   }, []);
+
+  const handleLogout = () => {
+    Cookies.remove("x_access_");
+    navigate("/login");
+  };
 
   const handleCreateOpen = () => setOpenCreate(true);
   const handleCreateClose = () => setOpenCreate(false);
@@ -210,89 +227,92 @@ const QRListPage = () => {
   };
 
   return (
-    <div className="QRListPage">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h2>Мои QR-коды</h2>
-        <IconButton
-          color="primary"
-          onClick={handleCreateOpen}
-          sx={{ float: "right" }}
-          aria-label="Создать QR"
+    <>
+      <Header userName={userName} onLogout={handleLogout} />
+      <div className="QRListPage">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          <AddIcon />
-        </IconButton>
-      </div>
-      <CreateQrDialog
-        open={openCreate}
-        onClose={handleCreateClose}
-        onSubmit={handleCreateSubmit}
-        loading={createLoading}
-        error={createError}
-        setError={setCreateError}
-      />
-      <CreateQrDialog
-        open={openEdit}
-        onClose={handleEditClose}
-        onSubmit={handleEditSubmit}
-        loading={editLoading}
-        error={editError}
-        setError={setEditError}
-        initialLink={editQr?.link_to_redirect}
-        initialDescription={editQr?.link_description}
-        isEdit={true}
-      />
-      {loading ? (
-        <QRLinkSkeleton />
-      ) : error ? (
-        <div className="qr-error">{error}</div>
-      ) : qrList.length === 0 ? (
-        <div className="qr-empty">Нет QR-кодов</div>
-      ) : (
-        <ul className="qr-list">
-          {qrList.map((qr) => (
-            <li key={qr.link_hash} className="qr-item">
-              <QRListItem
-                qr={qr}
-                onEdit={handleEditOpen}
-                onDelete={handleDeleteClick}
-              />
-            </li>
-          ))}
-        </ul>
-      )}
-      <Dialog open={!!deleteQr} onClose={handleDeleteCancel}>
-        <DialogTitle>Удалить QR-код?</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Вы действительно хотите удалить QR-код
-            <b> {deleteQr?.link_description || ""} </b>?
-          </DialogContentText>
-          {deleteError && (
-            <DialogContentText style={{ color: "red" }}>
-              {deleteError}
-            </DialogContentText>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteCancel} disabled={deleteLoading}>
-            Отмена
-          </Button>
-          <Button
-            onClick={handleDeleteConfirm}
-            color="error"
-            disabled={deleteLoading}
+          <h2>Мои QR-коды</h2>
+          <IconButton
+            color="primary"
+            onClick={handleCreateOpen}
+            sx={{ float: "right" }}
+            aria-label="Создать QR"
           >
-            {deleteLoading ? "Удаление..." : "Удалить"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+            <AddIcon />
+          </IconButton>
+        </div>
+        <CreateQrDialog
+          open={openCreate}
+          onClose={handleCreateClose}
+          onSubmit={handleCreateSubmit}
+          loading={createLoading}
+          error={createError}
+          setError={setCreateError}
+        />
+        <CreateQrDialog
+          open={openEdit}
+          onClose={handleEditClose}
+          onSubmit={handleEditSubmit}
+          loading={editLoading}
+          error={editError}
+          setError={setEditError}
+          initialLink={editQr?.link_to_redirect}
+          initialDescription={editQr?.link_description}
+          isEdit={true}
+        />
+        {loading ? (
+          <QRLinkSkeleton />
+        ) : error ? (
+          <div className="qr-error">{error}</div>
+        ) : qrList.length === 0 ? (
+          <div className="qr-empty">Нет QR-кодов</div>
+        ) : (
+          <ul className="qr-list">
+            {qrList.map((qr) => (
+              <li key={qr.link_hash} className="qr-item">
+                <QRListItem
+                  qr={qr}
+                  onEdit={handleEditOpen}
+                  onDelete={handleDeleteClick}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+        <Dialog open={!!deleteQr} onClose={handleDeleteCancel}>
+          <DialogTitle>Удалить QR-код?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Вы действительно хотите удалить QR-код
+              <b> {deleteQr?.link_description || ""} </b>?
+            </DialogContentText>
+            {deleteError && (
+              <DialogContentText style={{ color: "red" }}>
+                {deleteError}
+              </DialogContentText>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDeleteCancel} disabled={deleteLoading}>
+              Отмена
+            </Button>
+            <Button
+              onClick={handleDeleteConfirm}
+              color="error"
+              disabled={deleteLoading}
+            >
+              {deleteLoading ? "Удаление..." : "Удалить"}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    </>
   );
 };
 

@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path(
@@ -16,7 +15,7 @@ urlpatterns = [
         include(
             [
                 path("qr/", include("apps.qr_links.public_urls")),
-                path("login/", obtain_auth_token),
+                path("users/", include("apps.users.public_urls")),
             ]
         ),
     ),

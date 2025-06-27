@@ -90,7 +90,7 @@ const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError, ini
           />
           <TextField
             margin="dense"
-            label="Описание (необязательно)"
+            label="Описание"
             type="text"
             fullWidth
             variant="standard"

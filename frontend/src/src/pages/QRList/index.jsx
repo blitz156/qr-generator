@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import QRLinkService from "../../services/qr_links";
 import "./QRListPage.css";
-import Skeleton from '@mui/material/Skeleton';
-import Stack from '@mui/material/Stack';
+import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
 import CreateQrDialog from "./components/CreateQrDialog";
-import IconButton from '@mui/material/IconButton';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Button from '@mui/material/Button';
+import IconButton from "@mui/material/IconButton";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Button from "@mui/material/Button";
 
 const qrService = new QRLinkService();
 
@@ -25,20 +25,46 @@ const QRListItem = ({ qr, onEdit, onDelete }) => (
       <span
         className="qr-image"
         dangerouslySetInnerHTML={{ __html: qr.image_html }}
-        style={{ display: 'block', height: '100%', width: 'auto', maxWidth: '120px', aspectRatio: '1 / 1' }}
+        style={{
+          display: "block",
+          height: "100%",
+          width: "auto",
+          maxWidth: "120px",
+          aspectRatio: "1 / 1",
+        }}
       />
     </div>
     <div className="qr-info-col">
       <div className="qr-title">{qr.link_description}</div>
-      <div className="qr-link"><b>Ссылка в QR:</b> <a href={qr.qr_link} target="_blank" rel="noopener noreferrer">{qr.qr_link}</a></div>
-      <div className="qr-link"><b>Конечная ссылка:</b> <a href={qr.link_to_redirect} target="_blank" rel="noopener noreferrer">{qr.link_to_redirect}</a></div>
-      <div className="qr-date"><b>Создан:</b> {formatDate(qr.created_at)}</div>
+      <div className="qr-link">
+        <b>Ссылка в QR:</b>{" "}
+        <a href={qr.qr_link} target="_blank" rel="noopener noreferrer">
+          {qr.qr_link}
+        </a>
+      </div>
+      <div className="qr-link">
+        <b>Конечная ссылка:</b>{" "}
+        <a href={qr.link_to_redirect} target="_blank" rel="noopener noreferrer">
+          {qr.link_to_redirect}
+        </a>
+      </div>
+      <div className="qr-date">
+        <b>Создан:</b> {formatDate(qr.created_at)}
+      </div>
     </div>
-    <div className="qr-actions-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div
+      className="qr-actions-col"
+      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
       <IconButton aria-label="Редактировать QR" onClick={() => onEdit(qr)}>
         <EditIcon />
       </IconButton>
-      <IconButton aria-label="Удалить QR" color="error" onClick={() => onDelete(qr)} style={{ marginTop: 8 }}>
+      <IconButton
+        aria-label="Удалить QR"
+        color="error"
+        onClick={() => onDelete(qr)}
+        style={{ marginTop: 8 }}
+      >
         <DeleteIcon />
       </IconButton>
     </div>
@@ -91,7 +117,7 @@ const QRListPage = () => {
       .then((res) => {
         let list = [];
         if (Array.isArray(res.data)) {
-          list = res.data
+          list = res.data;
         }
         setQrList(list);
         setLoading(false);
@@ -110,7 +136,7 @@ const QRListPage = () => {
     try {
       await qrService.create({
         link_to_redirect: data.link,
-        link_description: data.description
+        link_description: data.description,
       });
       // Обновить список после создания
       const res = await qrService.list();
@@ -135,21 +161,24 @@ const QRListPage = () => {
   const handleEditSubmit = async (data) => {
     setEditError(null);
     setEditLoading(true);
-    try {
-      await qrService.update(editQr.link_hash, {
+
+    qrService
+      .update(editQr.link_hash, {
         link_to_redirect: data.link,
-        link_description: data.description
+        link_description: data.description,
+      })
+      .then(() => {
+        setOpenEdit(false);
+        setEditQr(null);
+        // Обновить список после редактирования
+        const res = qrService.list().then((res) => {
+          setQrList(Array.isArray(res.data) ? res.data : []);
+        });
+      })
+      .catch((err) => {
+        setEditError("Ошибка редактирования QR-кода");
+        setEditLoading(false);
       });
-      // Обновить список после редактирования
-      const res = await qrService.list();
-      setQrList(Array.isArray(res.data) ? res.data : []);
-      setOpenEdit(false);
-      setEditQr(null);
-    } catch (e) {
-      setEditError("Ошибка редактирования QR-кода");
-    } finally {
-      setEditLoading(false);
-    }
   };
 
   const handleDeleteClick = (qr) => {
@@ -168,10 +197,12 @@ const QRListPage = () => {
     setDeleteError(null);
     try {
       await qrService.delete(deleteQr.link_hash);
-      setQrList((prev) => prev.filter((item) => item.link_hash !== deleteQr.link_hash));
+      setQrList((prev) =>
+        prev.filter((item) => item.link_hash !== deleteQr.link_hash)
+      );
       setDeleteQr(null);
     } catch (e) {
-      setDeleteError('Ошибка удаления QR-кода');
+      setDeleteError("Ошибка удаления QR-кода");
     } finally {
       setDeleteLoading(false);
     }
@@ -179,14 +210,42 @@ const QRListPage = () => {
 
   return (
     <div className="QRListPage">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <h2>Мои QR-коды</h2>
-        <IconButton color="primary" onClick={handleCreateOpen} sx={{ float: 'right' }} aria-label="Создать QR">
+        <IconButton
+          color="primary"
+          onClick={handleCreateOpen}
+          sx={{ float: "right" }}
+          aria-label="Создать QR"
+        >
           <AddIcon />
         </IconButton>
       </div>
-      <CreateQrDialog open={openCreate} onClose={handleCreateClose} onSubmit={handleCreateSubmit} loading={createLoading} error={createError} setError={setCreateError} />
-      <CreateQrDialog open={openEdit} onClose={handleEditClose} onSubmit={handleEditSubmit} loading={editLoading} error={editError} setError={setEditError} initialLink={editQr?.link_to_redirect} initialDescription={editQr?.link_description} isEdit={true} />
+      <CreateQrDialog
+        open={openCreate}
+        onClose={handleCreateClose}
+        onSubmit={handleCreateSubmit}
+        loading={createLoading}
+        error={createError}
+        setError={setCreateError}
+      />
+      <CreateQrDialog
+        open={openEdit}
+        onClose={handleEditClose}
+        onSubmit={handleEditSubmit}
+        loading={editLoading}
+        error={editError}
+        setError={setEditError}
+        initialLink={editQr?.link_to_redirect}
+        initialDescription={editQr?.link_description}
+        isEdit={true}
+      />
       {loading ? (
         <QRLinkSkeleton />
       ) : error ? (
@@ -197,7 +256,11 @@ const QRListPage = () => {
         <ul className="qr-list">
           {qrList.map((qr) => (
             <li key={qr.link_hash} className="qr-item">
-              <QRListItem qr={qr} onEdit={handleEditOpen} onDelete={handleDeleteClick} />
+              <QRListItem
+                qr={qr}
+                onEdit={handleEditOpen}
+                onDelete={handleDeleteClick}
+              />
             </li>
           ))}
         </ul>
@@ -207,16 +270,24 @@ const QRListPage = () => {
         <DialogContent>
           <DialogContentText>
             Вы действительно хотите удалить QR-код
-            <b> {deleteQr?.link_description || ''} </b>?
+            <b> {deleteQr?.link_description || ""} </b>?
           </DialogContentText>
           {deleteError && (
-            <DialogContentText style={{ color: 'red' }}>{deleteError}</DialogContentText>
+            <DialogContentText style={{ color: "red" }}>
+              {deleteError}
+            </DialogContentText>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDeleteCancel} disabled={deleteLoading}>Отмена</Button>
-          <Button onClick={handleDeleteConfirm} color="error" disabled={deleteLoading}>
-            {deleteLoading ? 'Удаление...' : 'Удалить'}
+          <Button onClick={handleDeleteCancel} disabled={deleteLoading}>
+            Отмена
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
+            disabled={deleteLoading}
+          >
+            {deleteLoading ? "Удаление..." : "Удалить"}
           </Button>
         </DialogActions>
       </Dialog>

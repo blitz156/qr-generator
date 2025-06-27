@@ -1,7 +1,7 @@
 import "./Login.css";
 import { TextField, Button, Alert } from "@mui/material";
 import { useState } from "react";
-import LoginService from "../../services/login";
+import UserService from "../../services/users";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router";
 
@@ -16,7 +16,7 @@ const Login = () => {
   const authenticate = () => {
     setIsLoading(true);
 
-    new LoginService()
+    new UserService()
       .authenticate(username, password)
       .then((response) => {
         Cookies.set("x_access_", response.data.token);
@@ -63,6 +63,14 @@ const Login = () => {
         onClick={authenticate}
       >
         Войти
+      </Button>
+      <Button
+        variant="text"
+        className="LoginPage__RegisterBtn"
+        onClick={() => navigate("/register")}
+        style={{ marginTop: 16 }}
+      >
+        Регистрация
       </Button>
     </div>
   );

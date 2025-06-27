@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Login from "./pages/Login";
 import QRList from "./pages/QRList";
+import Register from "./pages/Register";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
   {
     path: "/login/",
     element: <Login />,
+  },
+  {
+    path: "/register/",
+    element: <Register />,
   },
 ]);
 

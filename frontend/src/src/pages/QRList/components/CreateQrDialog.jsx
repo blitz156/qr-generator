@@ -49,7 +49,7 @@ const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError, ini
 
   const handleSubmit = (e) => {
     e && e.preventDefault();
-    if (!link.trim() || linkError) return;
+    if (!link.trim() || !description.trim() || linkError) return;
     onSubmit({ link, description });
   };
 
@@ -84,8 +84,8 @@ const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError, ini
             variant="standard"
             value={link}
             onChange={handleLinkChange}
-            error={!!linkError}
-            helperText={linkError}
+            error={!!linkError || (!link && open)}
+            helperText={linkError || (!link && open ? 'Обязательное поле' : '')}
             disabled={loading}
           />
           <TextField
@@ -96,6 +96,8 @@ const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError, ini
             variant="standard"
             value={description}
             onChange={handleDescriptionChange}
+            error={!description && open}
+            helperText={!description && open ? 'Обязательное поле' : ''}
             disabled={loading}
           />
           {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
@@ -103,7 +105,7 @@ const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError, ini
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} disabled={loading}>Отмена</Button>
-        <Button onClick={handleSubmit} disabled={loading || !link || !!linkError} variant="contained">
+        <Button onClick={handleSubmit} disabled={loading || !link || !description || !!linkError} variant="contained">
           {isEdit ? "Сохранить" : "Создать"}
         </Button>
       </DialogActions>

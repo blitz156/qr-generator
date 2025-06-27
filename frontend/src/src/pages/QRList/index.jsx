@@ -33,6 +33,8 @@ const QRListPage = () => {
   const [qrList, setQrList] = useState([]);
   const [error, setError] = useState(null);
   const [openCreate, setOpenCreate] = useState(false);
+  const [createError, setCreateError] = useState(null);
+  const [createLoading, setCreateLoading] = useState(false);
 
   useEffect(() => {
     setError(undefined);
@@ -56,9 +58,9 @@ const QRListPage = () => {
   const handleCreateOpen = () => setOpenCreate(true);
   const handleCreateClose = () => setOpenCreate(false);
   const handleCreateSubmit = async (data) => {
+    setCreateError(null);
+    setCreateLoading(true);
     try {
-      setError(undefined);
-      setLoading(true);
       await qrService.create({
         link_to_redirect: data.link,
         link_description: data.description
@@ -66,11 +68,11 @@ const QRListPage = () => {
       // Обновить список после создания
       const res = await qrService.list();
       setQrList(Array.isArray(res.data) ? res.data : []);
-    } catch (e) {
-      setError("Ошибка создания QR-кода");
-    } finally {
-      setLoading(false);
       setOpenCreate(false);
+    } catch (e) {
+      setCreateError("Ошибка создания QR-кода");
+    } finally {
+      setCreateLoading(false);
     }
   };
 
@@ -82,7 +84,7 @@ const QRListPage = () => {
           <AddIcon />
         </IconButton>
       </div>
-      <CreateQrDialog open={openCreate} onClose={handleCreateClose} onSubmit={handleCreateSubmit} />
+      <CreateQrDialog open={openCreate} onClose={handleCreateClose} onSubmit={handleCreateSubmit} loading={createLoading} error={createError} setError={setCreateError} />
       {loading ? (
         <QRLinkSkeleton />
       ) : error ? (

@@ -8,21 +8,21 @@ export default class QRLinkService extends ApiRequest {
 
   // Получить одну QR-ссылку по id
   retrieve(id) {
-    return this.request("get", `"/api/qr/"${id}/`);
+    return this.request("get", `/api/qr/${id}/`);
   }
 
   // Создать новую QR-ссылку
   create(data) {
-    return this.request("post", "/api/qr/", undefined, data);
+    return this.request("post", "/api/qr/", {}, data);
   }
 
   // Обновить QR-ссылку полностью
   update(id, data) {
-    return this.request("put", `"/api/qr/"${id}/`, undefined, data);
+    return this.request("put", `/api/qr/${id}/`, {}, data);
   }
 
   // Удалить QR-ссылку
   delete(id) {
-    return this.request("delete", `"/api/qr/"${id}/`);
+    return this.request("delete", `/api/qr/${id}/`);
   }
 }

@@ -8,6 +8,7 @@ from apps.qr_links.serializers import QRLinkCreateUpdateSerializer, QRLinkGetSer
 
 class QRLinkViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
+    lookup_field = 'link_hash'
 
     def get_serializer_class(self):
         if self.action == "create":

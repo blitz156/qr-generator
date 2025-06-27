@@ -7,9 +7,9 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 
-const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError }) => {
-  const [link, setLink] = useState("");
-  const [description, setDescription] = useState("");
+const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError, initialLink = '', initialDescription = '', isEdit = false }) => {
+  const [link, setLink] = useState(initialLink);
+  const [description, setDescription] = useState(initialDescription);
   const [linkError, setLinkError] = useState("");
 
   const validateUrl = (value) => {
@@ -55,43 +55,47 @@ const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError }) =
 
   const handleClose = () => {
     if (loading) return; // Не даём закрыть во время загрузки
-    setLink("");
-    setDescription("");
+    setLink(initialLink || "");
+    setDescription(initialDescription || "");
     setLinkError("");
-    onClose();
+    if (setError) setError(null);
+    onClose && onClose();
   };
 
   useEffect(() => {
-    if (!open) {
-      setLink("");
-      setDescription("");
+    if (open) {
+      setLink(initialLink);
+      setDescription(initialDescription);
       setLinkError("");
     }
-  }, [open]);
+  }, [open, initialLink, initialDescription]);
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Создать QR</DialogTitle>
+      <DialogTitle>{isEdit ? "Редактировать QR-код" : "Создать QR-код"}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <TextField
             autoFocus
-            label="Ссылка"
-            placeholder="https://example.com"
+            margin="dense"
+            label="Ссылка для QR"
+            type="url"
+            fullWidth
+            variant="standard"
             value={link}
             onChange={handleLinkChange}
-            fullWidth
-            required
-            disabled={loading}
             error={!!linkError}
             helperText={linkError}
+            disabled={loading}
           />
           <TextField
-            label="Описание"
-            placeholder="Краткое описание ссылки"
+            margin="dense"
+            label="Описание (необязательно)"
+            type="text"
+            fullWidth
+            variant="standard"
             value={description}
             onChange={handleDescriptionChange}
-            fullWidth
             disabled={loading}
           />
           {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
@@ -99,8 +103,8 @@ const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError }) =
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} disabled={loading}>Отмена</Button>
-        <Button onClick={handleSubmit} variant="contained" disabled={!link.trim() || !!linkError || loading}>
-          {loading ? 'Создание...' : 'Создать'}
+        <Button onClick={handleSubmit} disabled={loading || !link || !!linkError} variant="contained">
+          {isEdit ? "Сохранить" : "Создать"}
         </Button>
       </DialogActions>
     </Dialog>

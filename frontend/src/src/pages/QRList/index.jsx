@@ -6,11 +6,12 @@ import Stack from '@mui/material/Stack';
 import CreateQrDialog from "./components/CreateQrDialog";
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 
 const qrService = new QRLinkService();
 
 // Новый компонент для отображения одного QR-кода
-const QRListItem = ({ qr }) => (
+const QRListItem = ({ qr, onEdit }) => (
   <div className="qr-list-row">
     <div className="qr-image-col">
       {/* QR-код SVG или img */}
@@ -25,6 +26,11 @@ const QRListItem = ({ qr }) => (
       <div className="qr-link"><b>Ссылка в QR:</b> <a href={qr.qr_link} target="_blank" rel="noopener noreferrer">{qr.qr_link}</a></div>
       <div className="qr-link"><b>Конечная ссылка:</b> <a href={qr.link_to_redirect} target="_blank" rel="noopener noreferrer">{qr.link_to_redirect}</a></div>
       <div className="qr-date"><b>Создан:</b> {formatDate(qr.created_at)}</div>
+    </div>
+    <div className="qr-actions-col">
+      <IconButton aria-label="Редактировать QR" onClick={() => onEdit(qr)}>
+        <EditIcon />
+      </IconButton>
     </div>
   </div>
 );
@@ -59,6 +65,10 @@ const QRListPage = () => {
   const [openCreate, setOpenCreate] = useState(false);
   const [createError, setCreateError] = useState(null);
   const [createLoading, setCreateLoading] = useState(false);
+  const [editQr, setEditQr] = useState(null);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editError, setEditError] = useState(null);
+  const [editLoading, setEditLoading] = useState(false);
 
   useEffect(() => {
     setError(undefined);
@@ -100,6 +110,35 @@ const QRListPage = () => {
     }
   };
 
+  const handleEditOpen = (qr) => {
+    setEditQr(qr);
+    setOpenEdit(true);
+    setEditError(null);
+  };
+  const handleEditClose = () => {
+    setOpenEdit(false);
+    setTimeout(() => setEditQr(null), 200); // чтобы модалка точно закрылась
+  };
+  const handleEditSubmit = async (data) => {
+    setEditError(null);
+    setEditLoading(true);
+    try {
+      await qrService.update(editQr.link_hash, {
+        link_to_redirect: data.link,
+        link_description: data.description
+      });
+      // Обновить список после редактирования
+      const res = await qrService.list();
+      setQrList(Array.isArray(res.data) ? res.data : []);
+      setOpenEdit(false);
+      setEditQr(null);
+    } catch (e) {
+      setEditError("Ошибка редактирования QR-кода");
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
   return (
     <div className="QRListPage">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -109,6 +148,7 @@ const QRListPage = () => {
         </IconButton>
       </div>
       <CreateQrDialog open={openCreate} onClose={handleCreateClose} onSubmit={handleCreateSubmit} loading={createLoading} error={createError} setError={setCreateError} />
+      <CreateQrDialog open={openEdit} onClose={handleEditClose} onSubmit={handleEditSubmit} loading={editLoading} error={editError} setError={setEditError} initialLink={editQr?.link_to_redirect} initialDescription={editQr?.link_description} isEdit={true} />
       {loading ? (
         <QRLinkSkeleton />
       ) : error ? (
@@ -119,7 +159,7 @@ const QRListPage = () => {
         <ul className="qr-list">
           {qrList.map((qr) => (
             <li key={qr.link_hash} className="qr-item">
-              <QRListItem qr={qr} />
+              <QRListItem qr={qr} onEdit={handleEditOpen} />
             </li>
           ))}
         </ul>

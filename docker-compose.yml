@@ -1,0 +1,52 @@
+services:
+  qr-backend:
+    build: backend/
+    environment:
+      DJANGO_SETTINGS_MODULE: project.settings-docker
+      PYTHONIOENCODING: UTF-8
+      PYTHONFAULTHANDLER: 1
+    volumes:
+      - ./backend/:/src/:cached
+    working_dir: /src
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 8000:8000
+    command: python manage.py runserver 0.0.0.0:8000
+    tty: true
+    stdin_open: true
+
+  qr-backend-celery:
+    build: backend/
+    environment:
+      DJANGO_SETTINGS_MODULE: project.settings-docker
+      PYTHONIOENCODING: UTF-8
+      PYTHONFAULTHANDLER: 1
+    volumes:
+      - ./backend/:/src/:cached
+    working_dir: /src
+#    command: celery -A project.celery beat -l INFO
+    command: celery -A project.celery worker -l INFO
+    tty: true
+    stdin_open: true
+
+  qr-frontend:
+    build: frontend/
+    ports:
+      - 3001:3000
+    volumes:
+      - ./frontend/src/public/:/src/public/:cached
+      - ./frontend/src/src/:/src/src/:cached
+      - ./frontend/src/package.json:/src/package.json:cached
+      - ./frontend/src/package-lock.json:/src/packagelock.json:cached
+    working_dir: /src
+    command: npm start
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+  redis:
+    image: redis:7

@@ -1,0 +1,1 @@
+from .qr_link import QRLink

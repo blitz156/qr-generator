@@ -1,0 +1,27 @@
+.LoginPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Высота страницы для вертикального центрирования */
+}
+
+.LoginPage__LoginInputs {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+.LoginPage__Header {
+}
+
+.LoginPage__LoginInput,
+.LoginPage__PasswordInput {
+  margin: 15px;
+}
+
+.LoginPage__LoginBtn {
+  margin-top: 20px;
+}

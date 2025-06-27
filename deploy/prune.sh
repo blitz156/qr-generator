@@ -1,0 +1,1 @@
+ssh root@65.109.4.187 'docker system prune --all --volumes'

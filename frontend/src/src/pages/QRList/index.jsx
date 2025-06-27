@@ -7,11 +7,18 @@ import CreateQrDialog from "./components/CreateQrDialog";
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
 
 const qrService = new QRLinkService();
 
 // Новый компонент для отображения одного QR-кода
-const QRListItem = ({ qr, onEdit }) => (
+const QRListItem = ({ qr, onEdit, onDelete }) => (
   <div className="qr-list-row">
     <div className="qr-image-col">
       {/* QR-код SVG или img */}
@@ -27,9 +34,12 @@ const QRListItem = ({ qr, onEdit }) => (
       <div className="qr-link"><b>Конечная ссылка:</b> <a href={qr.link_to_redirect} target="_blank" rel="noopener noreferrer">{qr.link_to_redirect}</a></div>
       <div className="qr-date"><b>Создан:</b> {formatDate(qr.created_at)}</div>
     </div>
-    <div className="qr-actions-col">
+    <div className="qr-actions-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <IconButton aria-label="Редактировать QR" onClick={() => onEdit(qr)}>
         <EditIcon />
+      </IconButton>
+      <IconButton aria-label="Удалить QR" color="error" onClick={() => onDelete(qr)} style={{ marginTop: 8 }}>
+        <DeleteIcon />
       </IconButton>
     </div>
   </div>
@@ -69,6 +79,9 @@ const QRListPage = () => {
   const [openEdit, setOpenEdit] = useState(false);
   const [editError, setEditError] = useState(null);
   const [editLoading, setEditLoading] = useState(false);
+  const [deleteQr, setDeleteQr] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
 
   useEffect(() => {
     setError(undefined);
@@ -139,6 +152,31 @@ const QRListPage = () => {
     }
   };
 
+  const handleDeleteClick = (qr) => {
+    setDeleteQr(qr);
+    setDeleteError(null);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteQr(null);
+    setDeleteError(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteQr) return;
+    setDeleteLoading(true);
+    setDeleteError(null);
+    try {
+      await qrService.delete(deleteQr.link_hash);
+      setQrList((prev) => prev.filter((item) => item.link_hash !== deleteQr.link_hash));
+      setDeleteQr(null);
+    } catch (e) {
+      setDeleteError('Ошибка удаления QR-кода');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   return (
     <div className="QRListPage">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -159,11 +197,29 @@ const QRListPage = () => {
         <ul className="qr-list">
           {qrList.map((qr) => (
             <li key={qr.link_hash} className="qr-item">
-              <QRListItem qr={qr} onEdit={handleEditOpen} />
+              <QRListItem qr={qr} onEdit={handleEditOpen} onDelete={handleDeleteClick} />
             </li>
           ))}
         </ul>
       )}
+      <Dialog open={!!deleteQr} onClose={handleDeleteCancel}>
+        <DialogTitle>Удалить QR-код?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Вы действительно хотите удалить QR-код
+            <b> {deleteQr?.link_description || ''} </b>?
+          </DialogContentText>
+          {deleteError && (
+            <DialogContentText style={{ color: 'red' }}>{deleteError}</DialogContentText>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} disabled={deleteLoading}>Отмена</Button>
+          <Button onClick={handleDeleteConfirm} color="error" disabled={deleteLoading}>
+            {deleteLoading ? 'Удаление...' : 'Удалить'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

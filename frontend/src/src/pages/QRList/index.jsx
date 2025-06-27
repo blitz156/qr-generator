@@ -189,7 +189,7 @@ const QRListPage = () => {
         setEditLoading(false);
         setEditQr(null);
         // Обновить список после редактирования
-        const res = qrService.list().then((res) => {
+        qrService.list().then((res) => {
           setQrList(Array.isArray(res.data) ? res.data : []);
         });
       })

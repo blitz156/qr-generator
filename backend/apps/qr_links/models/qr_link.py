@@ -11,9 +11,11 @@ class QRLink(models.Model):
     link_hash = models.UUIDField(default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
     def qr_link(self):
         return f"{settings.QR_DOMAIN}/public-api/qr/{self.link_hash}/"
 
+    @property
     def image_html(self):
         from apps.qr_links.services.qr_link import QRLinkService
         return QRLinkService().generate_qr_image_html_tag(self.qr_link)

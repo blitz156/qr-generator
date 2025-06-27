@@ -9,14 +9,38 @@ import AddIcon from '@mui/icons-material/Add';
 
 const qrService = new QRLinkService();
 
+// Новый компонент для отображения одного QR-кода
+const QRListItem = ({ qr }) => (
+  <div className="qr-list-row">
+    <div className="qr-image-col">
+      {/* QR-код SVG или img */}
+      <span
+        className="qr-image"
+        dangerouslySetInnerHTML={{ __html: qr.image_html }}
+        style={{ width: 50, height: 50, display: 'block' }}
+      />
+    </div>
+    <div className="qr-info-col">
+      <div className="qr-title">{qr.link_description}</div>
+      <div className="qr-link"><b>Ссылка в QR:</b> <a href={qr.qr_link} target="_blank" rel="noopener noreferrer">{qr.qr_link}</a></div>
+      <div className="qr-link"><b>Конечная ссылка:</b> <a href={qr.link_to_redirect} target="_blank" rel="noopener noreferrer">{qr.link_to_redirect}</a></div>
+      <div className="qr-date"><b>Создан:</b> {formatDate(qr.created_at)}</div>
+    </div>
+  </div>
+);
+
+// Новый скелетон для строки списка
 const QRLinkSkeleton = () => (
   <Stack spacing={2} className="qr-skeleton-list">
     {[...Array(5)].map((_, i) => (
-      <div key={i}>
-        <Skeleton variant="text" width="60%" height={20} />
-        <Skeleton variant="text" width="90%" height={20} />
-        <Skeleton variant="text" width="40%" height={20} />
-        <Skeleton variant="text" width="30%" height={20} />
+      <div key={i} className="qr-list-row">
+        <Skeleton variant="rectangular" width={50} height={50} />
+        <div className="qr-info-col">
+          <Skeleton width={80} height={24} />
+          <Skeleton width={220} height={18} />
+          <Skeleton width={160} height={18} />
+          <Skeleton width={100} height={16} />
+        </div>
       </div>
     ))}
   </Stack>
@@ -95,11 +119,7 @@ const QRListPage = () => {
         <ul className="qr-list">
           {qrList.map((qr) => (
             <li key={qr.link_hash} className="qr-item">
-              <div className="qr-title">{qr.link_description}</div>
-              <div className="qr-link"><b>Ссылка для распространения</b> {qr.qr_link}</div>
-              <div className="qr-link"><b>Конечная ссылка:</b> {qr.link_to_redirect}</div>
-              <div className="qr-date"><b>Создан:</b> {formatDate(qr.created_at)}</div>
-              <div className="qr-image" dangerouslySetInnerHTML={{ __html: qr.image_html }}></div>
+              <QRListItem qr={qr} />
             </li>
           ))}
         </ul>

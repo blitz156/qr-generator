@@ -18,4 +18,5 @@ class QRLinkGetSerializer(ModelSerializer):
             "image_html",
             "created_at",
             "link_hash",
+            "visit_count",
         ]

@@ -7,6 +7,7 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 
 from apps.qr_links.models.qr_link import QRLink
+from apps.qr_links.models.qr_link_visit import QRLinkVisit
 
 
 class QRLinkService:
@@ -40,5 +41,11 @@ class QRLinkService:
             f'<img src="data:image/png;base64,{qr_image_base64}" alt="QR Code" />'
         )
 
-    def get_link_to_redirect_by_hash(self, link_hash: str):
-        return QRLink.objects.get(link_hash=link_hash).link_to_redirect
+    def get_link_to_redirect_by_hash(
+        self, link_hash: str, user_agent: str = None, ip_address: str = None
+    ):
+        link_obj = QRLink.objects.get(link_hash=link_hash)
+        QRLinkVisit.objects.create(
+            qr_link=link_obj, user_agent=user_agent or "", ip_address=ip_address
+        )
+        return link_obj.link_to_redirect

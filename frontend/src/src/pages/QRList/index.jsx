@@ -55,6 +55,9 @@ const QRListItem = ({ qr, onEdit, onDelete }) => (
       <div className="qr-date">
         <b>Создан:</b> {formatDate(qr.created_at)}
       </div>
+      <div className="qr-visit-count">
+        <b>Кол-во переходов:</b> {qr.visit_count}
+      </div>
     </div>
     <div
       className="qr-actions-col"
@@ -86,6 +89,7 @@ const QRLinkSkeleton = () => (
           <Skeleton width={220} height={18} />
           <Skeleton width={160} height={18} />
           <Skeleton width={100} height={16} />
+          <Skeleton width={50} height={16} />
         </div>
       </div>
     ))}

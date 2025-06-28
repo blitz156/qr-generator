@@ -19,6 +19,7 @@ export default class ApiRequest {
       data,
     }).catch((error) => {
       if (error.response.status === 401) {
+        Cookies.remove("x_access_");
         window.location = "/login/";
       } else {
         throw error;

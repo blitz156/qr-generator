@@ -19,3 +19,7 @@ class QRLink(models.Model):
     def image_html(self):
         from apps.qr_links.services.qr_link import QRLinkService
         return QRLinkService().generate_qr_image_html_tag(self.qr_link)
+
+    @property
+    def visit_count(self):
+        return self.visits.count()

@@ -19,12 +19,13 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router";
 import Header from "../../components/Header/Header";
 import { useUser } from '../../context/UserContext';
+import useTranslations from '../../context/useTranslations';
 
 const qrService = new QRLinkService();
 
 // Новый компонент для отображения одного QR-кода
 const QRListItem = ({ qr, onEdit, onDelete }) => {
-  const { t } = useUser();
+  const { t, formatDate } = useTranslations();
   return (
     <div className="qr-list-row">
       <div className="qr-image-col">
@@ -99,12 +100,6 @@ const QRLinkSkeleton = () => (
     ))}
   </Stack>
 );
-
-const formatDate = (dateStr) => {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  return d.toLocaleString();
-};
 
 const QRListPage = () => {
   const { t } = useUser();

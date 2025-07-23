@@ -28,8 +28,23 @@ const LanguageSelector = ({userLang}) => {
   }
 
   const LANGUAGES = [
-    { code: "ru", label: t('language__russian') },
-    { code: "en", label: t('language__english') },
+    { code: "ru", native: "Русский" },
+    { code: "en", native: "English" },
+    { code: "es", native: "Español" },
+    { code: "fr", native: "Français" },
+    { code: "de", native: "Deutsch" },
+    { code: "it", native: "Italiano" },
+    { code: "zh", native: "中文" },
+    { code: "ja", native: "日本語" },
+    { code: "pt", native: "Português" },
+    { code: "ar", native: "العربية" },
+    { code: "hi", native: "हिन्दी" },
+    { code: "tr", native: "Türkçe" },
+    { code: "ko", native: "한국어" },
+    { code: "pl", native: "Polski" },
+    { code: "uk", native: "Українська" },
+    { code: "nl", native: "Nederlands" },
+    { code: "sv", native: "Svenska" },
   ];
 
   return (
@@ -42,7 +57,7 @@ const LanguageSelector = ({userLang}) => {
     >
       {LANGUAGES.map((langObj) => (
         <MenuItem key={langObj.code} value={langObj.code}>
-          {langObj.label}
+          {langObj.native}
         </MenuItem>
       ))}
     </Select>

@@ -2,6 +2,11 @@
 
 # Создать директорию на сервере, если её нет
 ssh root@46.62.142.197 'mkdir -p /root/my_web_apps/qr-generator'
+ssh root@46.62.142.197 'mkdir -p /root/my_web_apps/dumps/qr-generator/'
+ssh root@46.62.142.197 'ssh-keygen -t rsa -b 4096'
+ssh root@46.62.142.197 'echo ============================='
+ssh root@46.62.142.197 'cat /root/.ssh/id_rsa.pub'
+ssh root@46.62.142.197 'echo ============================='
 
 # Копируем всю текущую папку на сервер
 rsync -avz --delete ./ root@46.62.142.197:/root/my_web_apps/qr-generator/

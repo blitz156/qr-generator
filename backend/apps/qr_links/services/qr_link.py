@@ -3,7 +3,6 @@ import base64
 import qrcode
 from io import BytesIO
 
-from django.conf import settings
 from django.utils.safestring import mark_safe
 
 from apps.qr_links.models.qr_link import QRLink

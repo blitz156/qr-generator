@@ -1,1 +1,1 @@
-ssh root@65.109.4.187 'cd /root/my_web_apps/qr-generator/deploy/ && sh rebuild.sh'
+ssh root@46.62.142.197 'cd /root/my_web_apps/qr-generator/deploy/ && sh rebuild.sh'

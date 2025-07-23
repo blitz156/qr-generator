@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import UserService from '../services/users';
-import TRANSLATIONS from '../translations';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
+import UserService from "../services/users";
+import TRANSLATIONS from "../translations";
 
 const UserContext = createContext({
   userInfo: {},
@@ -9,22 +15,27 @@ const UserContext = createContext({
   loading: true,
 });
 
+
 export const UserProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const userService = new UserService();
-    userService.getInfo()
+    userService
+      .getInfo()
       .then((res) => setUserInfo(res?.data || {}))
       .catch(() => setUserInfo({}))
       .finally(() => setLoading(false));
   }, []);
 
-  const t = useCallback((key) => {
-    const lang = userInfo.language || 'ru';
-    return TRANSLATIONS[key]?.[lang] || TRANSLATIONS[key]?.ru || key;
-  }, [userInfo]);
+  const t = useCallback(
+    (key) => {
+      const lang = userInfo.language || "ru";
+      return TRANSLATIONS[key]?.[lang] || TRANSLATIONS[key]?.ru || key;
+    },
+    [userInfo]
+  );
 
   return (
     <UserContext.Provider value={{ userInfo, setUserInfo, t, loading }}>

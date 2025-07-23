@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import QRLinkService from "../../services/qr_links";
-import UserService from "../../services/users";
 import "./QRListPage.css";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
@@ -15,17 +14,16 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import Cookies from "js-cookie";
-import { useNavigate } from "react-router";
 import Header from "../../components/Header/Header";
-import { useUser } from '../../context/UserContext';
-import useTranslations from '../../context/useTranslations';
+import { useUser } from "../../context/UserContext";
+import useTranslations from "../../context/useTranslations";
 
 const qrService = new QRLinkService();
 
 // Новый компонент для отображения одного QR-кода
 const QRListItem = ({ qr, onEdit, onDelete }) => {
   const { t, formatDate } = useTranslations();
+
   return (
     <div className="qr-list-row">
       <div className="qr-image-col">
@@ -45,33 +43,44 @@ const QRListItem = ({ qr, onEdit, onDelete }) => {
       <div className="qr-info-col">
         <div className="qr-title">{qr.link_description}</div>
         <div className="qr-link">
-          <b>{t('qr_list_page__static_link')}</b>{' '}
+          <b>{t("qr_list_page__static_link")}</b>{" "}
           <a href={qr.qr_link} target="_blank" rel="noopener noreferrer">
             {qr.qr_link}
           </a>
         </div>
         <div className="qr-link">
-          <b>{t('qr_list_page__final_link')}</b>{' '}
-          <a href={qr.link_to_redirect} target="_blank" rel="noopener noreferrer">
+          <b>{t("qr_list_page__final_link")}</b>{" "}
+          <a
+            href={qr.link_to_redirect}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {qr.link_to_redirect}
           </a>
         </div>
         <div className="qr-date">
-          <b>{t('qr_list_page__created')}</b> {formatDate(qr.created_at)}
+          <b>{t("qr_list_page__created")}</b> {formatDate(qr.created_at)}
         </div>
         <div className="qr-visit-count">
-          <b>{t('qr_list_page__visit_count')}</b> {qr.visit_count}
+          <b>{t("qr_list_page__visit_count")}</b> {qr.visit_count}
         </div>
       </div>
       <div
         className="qr-actions-col"
-        style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
       >
-        <IconButton aria-label={t('qr_list_page__edit')} onClick={() => onEdit(qr)}>
+        <IconButton
+          aria-label={t("qr_list_page__edit")}
+          onClick={() => onEdit(qr)}
+        >
           <EditIcon />
         </IconButton>
         <IconButton
-          aria-label={t('qr_list_page__remove')}
+          aria-label={t("qr_list_page__remove")}
           color="error"
           onClick={() => onDelete(qr)}
           style={{ marginTop: 8 }}
@@ -117,16 +126,8 @@ const QRListPage = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
 
-  const [userInfo, setUserInfo] = useState({});
-  const navigate = useNavigate();
-
   useEffect(() => {
     setError(undefined);
-
-    const userService = new UserService();
-    userService.getInfo().then((res) => {
-      setUserInfo(res?.data || {});
-    }).catch(() => setUserInfo({}));
 
     qrService
       .list()
@@ -139,15 +140,11 @@ const QRListPage = () => {
         setLoading(false);
       })
       .catch((err) => {
-        setError(t('qr_list_page__load_error'));
+        setError(t("qr_list_page__load_error"));
         setLoading(false);
       });
+  // eslint-disable-next-line
   }, []);
-
-  const handleLogout = () => {
-    Cookies.remove("x_access_");
-    navigate("/login");
-  };
 
   const handleCreateOpen = () => setOpenCreate(true);
   const handleCreateClose = () => setOpenCreate(false);
@@ -164,7 +161,7 @@ const QRListPage = () => {
       setQrList(Array.isArray(res.data) ? res.data : []);
       setOpenCreate(false);
     } catch (e) {
-      setCreateError(t('qr_list_page__create_error'));
+      setCreateError(t("qr_list_page__create_error"));
     } finally {
       setCreateLoading(false);
     }
@@ -198,7 +195,7 @@ const QRListPage = () => {
         });
       })
       .catch((err) => {
-        setEditError(t('qr_list_page__edit_error'));
+        setEditError(t("qr_list_page__edit_error"));
         setEditLoading(false);
       });
   };
@@ -224,7 +221,7 @@ const QRListPage = () => {
       );
       setDeleteQr(null);
     } catch (e) {
-      setDeleteError(t('qr_list_page__remove_qr_item_error'));
+      setDeleteError(t("qr_list_page__remove_qr_item_error"));
     } finally {
       setDeleteLoading(false);
     }
@@ -232,7 +229,7 @@ const QRListPage = () => {
 
   return (
     <>
-      <Header userInfo={userInfo} onLogout={handleLogout} />
+      <Header />
       <div className="QRListPage">
         <div
           style={{
@@ -241,12 +238,12 @@ const QRListPage = () => {
             alignItems: "center",
           }}
         >
-          <h2>{t('qr_list_page__my_qrs')}</h2>
+          <h2>{t("qr_list_page__my_qrs")}</h2>
           <IconButton
             color="primary"
             onClick={handleCreateOpen}
             sx={{ float: "right" }}
-            aria-label={t('qr_list_page__create')}
+            aria-label={t("qr_list_page__create")}
           >
             <AddIcon />
           </IconButton>
@@ -275,7 +272,7 @@ const QRListPage = () => {
         ) : error ? (
           <div className="qr-error">{error}</div>
         ) : qrList.length === 0 ? (
-          <div className="qr-empty">{t('qr_list_page__no_qrs')}</div>
+          <div className="qr-empty">{t("qr_list_page__no_qrs")}</div>
         ) : (
           <ul className="qr-list">
             {qrList.map((qr) => (
@@ -290,10 +287,10 @@ const QRListPage = () => {
           </ul>
         )}
         <Dialog open={!!deleteQr} onClose={handleDeleteCancel}>
-          <DialogTitle>{t('qr_list_page__delete_confirm_title')}</DialogTitle>
+          <DialogTitle>{t("qr_list_page__delete_confirm_title")}</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              {t('qr_list_page__delete_confirm_text')}
+              {t("qr_list_page__delete_confirm_text")}
               <b> {deleteQr?.link_description || ""} </b>?
             </DialogContentText>
             {deleteError && (
@@ -304,14 +301,16 @@ const QRListPage = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleDeleteCancel} disabled={deleteLoading}>
-              {t('qr_list_page__delete_cancel')}
+              {t("qr_list_page__delete_cancel")}
             </Button>
             <Button
               onClick={handleDeleteConfirm}
               color="error"
               disabled={deleteLoading}
             >
-              {deleteLoading ? t('qr_list_page__deleting') : t('qr_list_page__delete_action')}
+              {deleteLoading
+                ? t("qr_list_page__deleting")
+                : t("qr_list_page__delete_action")}
             </Button>
           </DialogActions>
         </Dialog>

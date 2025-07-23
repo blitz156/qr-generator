@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import UserService from "../../services/users";
-import { useUser } from '../../context/UserContext';
+import { useUser } from "../../context/UserContext";
 
 const userService = new UserService();
 
-const LanguageSelector = ({userLang}) => {
+const LanguageSelector = ({ userLang }) => {
   const { setUserInfo } = useUser();
   const [changedUserlang, setChangedUserLang] = useState(undefined);
 
@@ -14,7 +14,7 @@ const LanguageSelector = ({userLang}) => {
     const lang = e.target.value;
     userService.setLanguage(lang).then(() => {
       setChangedUserLang(lang);
-      setUserInfo(prev => ({ ...prev, language: lang })); // мгновенное обновление языка
+      setUserInfo((prev) => ({ ...prev, language: lang })); // мгновенное обновление языка
     });
   };
 

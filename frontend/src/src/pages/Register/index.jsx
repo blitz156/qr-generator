@@ -1,28 +1,30 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import UserService from '../../services/users';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import UserService from "../../services/users";
 import { TextField, Button, Alert } from "@mui/material";
 import Cookies from "js-cookie";
 import "../Login/Login.css";
 
 const Register = () => {
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-
   const handleSubmit = () => {
-    setError('');
+    setError("");
     setIsLoading(true);
-      new UserService().register(login, password).then(res => {
+    new UserService()
+      .register(login, password)
+      .then((res) => {
         Cookies.set("x_access_", res.data.token);
-        navigate('/');
-      }).catch(err => {
-          setError(err?.response?.data?.detail || 'Ошибка регистрации');
-          setIsLoading(false);
+        navigate("/");
       })
+      .catch((err) => {
+        setError(err?.response?.data?.detail || "Ошибка регистрации");
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -52,9 +54,7 @@ const Register = () => {
           required
         />
       </div>
-      {error ? (
-        <Alert severity="error">{error}</Alert>
-      ) : null}
+      {error ? <Alert severity="error">{error}</Alert> : null}
       <Button
         disabled={isLoading}
         variant="outlined"

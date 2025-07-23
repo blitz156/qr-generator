@@ -12,7 +12,7 @@ import Register from "./pages/Register";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <QRList />,
+    element: <UserProvider><QRList /></UserProvider>,
   },
   {
     path: "/login/",
@@ -26,9 +26,7 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <UserProvider>
     <RouterProvider router={router} />
-  </UserProvider>
 );
 
 reportWebVitals();

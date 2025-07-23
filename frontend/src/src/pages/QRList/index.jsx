@@ -117,7 +117,7 @@ const QRListPage = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
 
-  const [userName, setUserName] = useState("");
+  const [userInfo, setUserInfo] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,8 +125,8 @@ const QRListPage = () => {
 
     const userService = new UserService();
     userService.getInfo().then((res) => {
-      setUserName(res?.data?.username || "Пользователь");
-    }).catch(() => setUserName("Пользователь"));
+      setUserInfo(res?.data || {});
+    }).catch(() => setUserInfo({}));
 
     qrService
       .list()
@@ -232,7 +232,7 @@ const QRListPage = () => {
 
   return (
     <>
-      <Header userName={userName} onLogout={handleLogout} />
+      <Header userInfo={userInfo} onLogout={handleLogout} />
       <div className="QRListPage">
         <div
           style={{

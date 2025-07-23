@@ -22,4 +22,8 @@ export default class UserService extends ApiRequest {
   getInfo() {
     return this.request("get", "/api/users/info/");
   }
+
+  setLanguage(language) {
+    return this.request("put", "/api/users/language/", {}, { language });
+  }
 }

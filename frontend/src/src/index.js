@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { UserProvider } from "./context/UserContext";
 
 import "./index.css";
 import Login from "./pages/Login";
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<RouterProvider router={router} />);
+root.render(
+  <UserProvider>
+    <RouterProvider router={router} />
+  </UserProvider>
+);
 
 reportWebVitals();

@@ -6,8 +6,10 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
+import { useUser } from '../../../context/UserContext';
 
 const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError, initialLink = '', initialDescription = '', isEdit = false }) => {
+  const { t } = useUser();
   const [link, setLink] = useState(initialLink);
   const [description, setDescription] = useState(initialDescription);
   const [linkError, setLinkError] = useState("");
@@ -36,7 +38,7 @@ const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError, ini
     if (!value.trim()) {
       setLinkError("");
     } else if (!validateUrl(value)) {
-      setLinkError("Введите корректную ссылку (http/https)");
+      setLinkError(t('create_qr_dialog__invalid_url'));
     } else {
       setLinkError("");
     }
@@ -72,41 +74,43 @@ const CreateQrDialog = ({ open, onClose, onSubmit, loading, error, setError, ini
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-      <DialogTitle>{isEdit ? "Редактировать QR-код" : "Создать QR-код"}</DialogTitle>
+      <DialogTitle>{isEdit ? t('create_qr_dialog__edit_title') : t('create_qr_dialog__create_title')}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <TextField
             autoFocus
             margin="dense"
-            label="Ссылка для QR"
+            label={t('create_qr_dialog__link_label')}
             type="url"
             fullWidth
             variant="standard"
             value={link}
             onChange={handleLinkChange}
             error={!!linkError || (!link && open)}
-            helperText={linkError || (!link && open ? 'Обязательное поле' : '')}
+            helperText={linkError || (!link && open ? t('create_qr_dialog__required_field') : '')}
             disabled={loading}
           />
           <TextField
             margin="dense"
-            label="Описание"
+            label={t('create_qr_dialog__desc_label')}
             type="text"
             fullWidth
             variant="standard"
             value={description}
             onChange={handleDescriptionChange}
             error={!description && open}
-            helperText={!description && open ? 'Обязательное поле' : ''}
+            helperText={!description && open ? t('create_qr_dialog__required_field') : ''}
             disabled={loading}
           />
           {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} disabled={loading}>Отмена</Button>
+        <Button onClick={handleClose} disabled={loading}>
+          {t('create_qr_dialog__cancel')}
+        </Button>
         <Button onClick={handleSubmit} disabled={loading || !link || !description || !!linkError} variant="contained">
-          {isEdit ? "Сохранить" : "Создать"}
+          {isEdit ? t('create_qr_dialog__save') : t('create_qr_dialog__create')}
         </Button>
       </DialogActions>
     </Dialog>

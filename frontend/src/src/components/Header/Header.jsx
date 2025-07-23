@@ -2,8 +2,10 @@ import React from "react";
 import "./Header.css";
 import Button from "@mui/material/Button";
 import LanguageSelector from "../LanguageSelector/LanguageSelector";
+import { useUser } from '../../context/UserContext';
 
 const Header = ({ userInfo, onLogout }) => {
+  const { t } = useUser();
   return (
     <header className="header mui-minimal-header">
       <div className="mui-minimal-header-content">
@@ -15,11 +17,11 @@ const Header = ({ userInfo, onLogout }) => {
             <rect x="7" y="19" width="6" height="6" rx="2" fill="#1976d2"/>
             <rect x="19" y="19" width="6" height="6" rx="2" fill="#1976d2"/>
           </svg>
-          <span className="mui-minimal-header-title">QR Generator</span>
+          <span className="mui-minimal-header-title">{t('header__title')}</span>
         </div>
         <div className="mui-minimal-header-user">
-          <LanguageSelector userLang={userInfo.language} />
-          <span className="mui-minimal-header-user-name">{userInfo.username}</span>
+          <LanguageSelector userLang={userInfo?.language} />
+          <span className="mui-minimal-header-user-name">{userInfo?.username}</span>
           <Button
             variant="outlined"
             color="primary"
@@ -27,7 +29,7 @@ const Header = ({ userInfo, onLogout }) => {
             className="mui-minimal-header-logout-btn"
             sx={{ borderRadius: '16px', textTransform: 'none', fontWeight: 500, fontSize: '1rem', minWidth: 80 }}
           >
-            Выйти
+            {t('header__logout')}
           </Button>
         </div>
       </div>

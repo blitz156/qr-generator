@@ -18,65 +18,69 @@ import Button from "@mui/material/Button";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router";
 import Header from "../../components/Header/Header";
+import { useUser } from '../../context/UserContext';
 
 const qrService = new QRLinkService();
 
 // Новый компонент для отображения одного QR-кода
-const QRListItem = ({ qr, onEdit, onDelete }) => (
-  <div className="qr-list-row">
-    <div className="qr-image-col">
-      {/* QR-код SVG или img */}
-      <span
-        className="qr-image"
-        dangerouslySetInnerHTML={{ __html: qr.image_html }}
-        style={{
-          display: "block",
-          height: "100%",
-          width: "auto",
-          maxWidth: "120px",
-          aspectRatio: "1 / 1",
-        }}
-      />
-    </div>
-    <div className="qr-info-col">
-      <div className="qr-title">{qr.link_description}</div>
-      <div className="qr-link">
-        <b>Неизменная ссылка:</b>{" "}
-        <a href={qr.qr_link} target="_blank" rel="noopener noreferrer">
-          {qr.qr_link}
-        </a>
+const QRListItem = ({ qr, onEdit, onDelete }) => {
+  const { t } = useUser();
+  return (
+    <div className="qr-list-row">
+      <div className="qr-image-col">
+        {/* QR-код SVG или img */}
+        <span
+          className="qr-image"
+          dangerouslySetInnerHTML={{ __html: qr.image_html }}
+          style={{
+            display: "block",
+            height: "100%",
+            width: "auto",
+            maxWidth: "120px",
+            aspectRatio: "1 / 1",
+          }}
+        />
       </div>
-      <div className="qr-link">
-        <b>Конечная ссылка:</b>{" "}
-        <a href={qr.link_to_redirect} target="_blank" rel="noopener noreferrer">
-          {qr.link_to_redirect}
-        </a>
+      <div className="qr-info-col">
+        <div className="qr-title">{qr.link_description}</div>
+        <div className="qr-link">
+          <b>{t('qr_list_page__static_link')}</b>{' '}
+          <a href={qr.qr_link} target="_blank" rel="noopener noreferrer">
+            {qr.qr_link}
+          </a>
+        </div>
+        <div className="qr-link">
+          <b>{t('qr_list_page__final_link')}</b>{' '}
+          <a href={qr.link_to_redirect} target="_blank" rel="noopener noreferrer">
+            {qr.link_to_redirect}
+          </a>
+        </div>
+        <div className="qr-date">
+          <b>{t('qr_list_page__created')}</b> {formatDate(qr.created_at)}
+        </div>
+        <div className="qr-visit-count">
+          <b>{t('qr_list_page__visit_count')}</b> {qr.visit_count}
+        </div>
       </div>
-      <div className="qr-date">
-        <b>Создан:</b> {formatDate(qr.created_at)}
-      </div>
-      <div className="qr-visit-count">
-        <b>Кол-во переходов:</b> {qr.visit_count}
-      </div>
-    </div>
-    <div
-      className="qr-actions-col"
-      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-    >
-      <IconButton aria-label="Редактировать QR" onClick={() => onEdit(qr)}>
-        <EditIcon />
-      </IconButton>
-      <IconButton
-        aria-label="Удалить QR"
-        color="error"
-        onClick={() => onDelete(qr)}
-        style={{ marginTop: 8 }}
+      <div
+        className="qr-actions-col"
+        style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
       >
-        <DeleteIcon />
-      </IconButton>
+        <IconButton aria-label={t('qr_list_page__edit')} onClick={() => onEdit(qr)}>
+          <EditIcon />
+        </IconButton>
+        <IconButton
+          aria-label={t('qr_list_page__remove')}
+          color="error"
+          onClick={() => onDelete(qr)}
+          style={{ marginTop: 8 }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Новый скелетон для строки списка
 const QRLinkSkeleton = () => (
@@ -103,6 +107,7 @@ const formatDate = (dateStr) => {
 };
 
 const QRListPage = () => {
+  const { t } = useUser();
   const [loading, setLoading] = useState(true);
   const [qrList, setQrList] = useState([]);
   const [error, setError] = useState(null);
@@ -139,7 +144,7 @@ const QRListPage = () => {
         setLoading(false);
       })
       .catch((err) => {
-        setError("Ошибка загрузки QR-кодов");
+        setError(t('qr_list_page__load_error'));
         setLoading(false);
       });
   }, []);
@@ -164,7 +169,7 @@ const QRListPage = () => {
       setQrList(Array.isArray(res.data) ? res.data : []);
       setOpenCreate(false);
     } catch (e) {
-      setCreateError("Ошибка создания QR-кода");
+      setCreateError(t('qr_list_page__create_error'));
     } finally {
       setCreateLoading(false);
     }
@@ -198,7 +203,7 @@ const QRListPage = () => {
         });
       })
       .catch((err) => {
-        setEditError("Ошибка редактирования QR-кода");
+        setEditError(t('qr_list_page__edit_error'));
         setEditLoading(false);
       });
   };
@@ -224,7 +229,7 @@ const QRListPage = () => {
       );
       setDeleteQr(null);
     } catch (e) {
-      setDeleteError("Ошибка удаления QR-кода");
+      setDeleteError(t('qr_list_page__remove_qr_item_error'));
     } finally {
       setDeleteLoading(false);
     }
@@ -241,12 +246,12 @@ const QRListPage = () => {
             alignItems: "center",
           }}
         >
-          <h2>Мои QR-коды</h2>
+          <h2>{t('qr_list_page__my_qrs')}</h2>
           <IconButton
             color="primary"
             onClick={handleCreateOpen}
             sx={{ float: "right" }}
-            aria-label="Создать QR"
+            aria-label={t('qr_list_page__create')}
           >
             <AddIcon />
           </IconButton>
@@ -275,7 +280,7 @@ const QRListPage = () => {
         ) : error ? (
           <div className="qr-error">{error}</div>
         ) : qrList.length === 0 ? (
-          <div className="qr-empty">Нет QR-кодов</div>
+          <div className="qr-empty">{t('qr_list_page__no_qrs')}</div>
         ) : (
           <ul className="qr-list">
             {qrList.map((qr) => (
@@ -290,10 +295,10 @@ const QRListPage = () => {
           </ul>
         )}
         <Dialog open={!!deleteQr} onClose={handleDeleteCancel}>
-          <DialogTitle>Удалить QR-код?</DialogTitle>
+          <DialogTitle>{t('qr_list_page__delete_confirm_title')}</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Вы действительно хотите удалить QR-код
+              {t('qr_list_page__delete_confirm_text')}
               <b> {deleteQr?.link_description || ""} </b>?
             </DialogContentText>
             {deleteError && (
@@ -304,14 +309,14 @@ const QRListPage = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleDeleteCancel} disabled={deleteLoading}>
-              Отмена
+              {t('qr_list_page__delete_cancel')}
             </Button>
             <Button
               onClick={handleDeleteConfirm}
               color="error"
               disabled={deleteLoading}
             >
-              {deleteLoading ? "Удаление..." : "Удалить"}
+              {deleteLoading ? t('qr_list_page__deleting') : t('qr_list_page__delete_action')}
             </Button>
           </DialogActions>
         </Dialog>

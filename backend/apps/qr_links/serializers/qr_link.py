@@ -14,7 +14,6 @@ class QRLinkGetSerializer(ModelSerializer):
         fields = [
             "link_to_redirect",
             "link_description",
-            "qr_link",
             "image_html",
             "created_at",
             "link_hash",

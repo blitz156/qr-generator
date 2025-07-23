@@ -43,12 +43,6 @@ const QRListItem = ({ qr, onEdit, onDelete }) => {
       <div className="qr-info-col">
         <div className="qr-title">{qr.link_description}</div>
         <div className="qr-link">
-          <b>{t("qr_list_page__static_link")}</b>{" "}
-          <a href={qr.qr_link} target="_blank" rel="noopener noreferrer">
-            {qr.qr_link}
-          </a>
-        </div>
-        <div className="qr-link">
           <b>{t("qr_list_page__final_link")}</b>{" "}
           <a
             href={qr.link_to_redirect}
